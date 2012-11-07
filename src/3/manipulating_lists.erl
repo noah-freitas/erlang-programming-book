@@ -8,10 +8,14 @@
 		% (List)
 		% creates a reverse of List.
 		% => ReversedList
-	concatenate/1
+	concatenate/1,
 		% (ListOfLists)
 		% concatenates a list of lists into a single list.
 		% => ConcatenatedList
+	flatten/1
+		% (NestedLists)
+		% flattens a list of nested lists into a single list.
+		% => FlattenedList
 ]).
 
 filter([], _I) ->
@@ -36,3 +40,12 @@ concatenate([[] | List], Con) ->
 	concatenate(List, Con);
 concatenate([[H | T] | List], Con) ->
 	concatenate([T | List], [H | Con]).
+
+flatten([]) ->
+	[];
+flatten([[H | []] | L]) ->
+	[H | flatten(L)];
+flatten([[H | T] | L]) ->
+	[H | flatten(concatenate([T, L]))];
+flatten([H | L]) ->
+	[H | flatten(L)].
