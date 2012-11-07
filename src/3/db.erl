@@ -1,5 +1,5 @@
 -module(db).
--exports([
+-export([
 	new/0,
 		% create a new database.
 		% => Db.
@@ -41,7 +41,7 @@ delete(Key, Db) ->
 	delete(Key, Db, []).
 
 delete(_Key, [], NewDb) ->
-	NewDb;
+	lists:reverse(NewDb);
 delete(Key, [{Key, _Element} | T], NewDb) ->
 	delete(Key, T, NewDb);
 delete(Key, [H | T], NewDb) ->
@@ -60,7 +60,7 @@ match(Element, Db) ->
 	match(Element, Db, []).
 
 match(_Element, [], Keys) ->
-	Keys;
+	lists:reverse(Keys);
 match(Element, [{Key, Element} | T], Keys) ->
 	match(Element, T, [Key | Keys]);
 match(Element, [_H | T], Keys) ->
