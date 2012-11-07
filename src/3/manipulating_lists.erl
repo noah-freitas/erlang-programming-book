@@ -10,14 +10,12 @@
 		% => ReversedList
 ]).
 
-filter(L, I) ->
-	filter(L, I, []).
-filter([], _I, N) ->
-	reverse(N);
-filter([H | T], I, N) when H =< I ->
-	filter(T, I, [H | N]);
-filter([_H | T], I, N) ->
-	filter(T, I, N).
+filter([], _I) ->
+	[];
+filter([H | T], I) when H =< I ->
+	[H | filter(T, I)];
+filter([_H | T], I) ->
+	filter(T, I).
 
 reverse(L) ->
 	reverse(L, []).
