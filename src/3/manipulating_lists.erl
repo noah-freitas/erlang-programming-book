@@ -43,6 +43,8 @@ concatenate([[H | T] | List], Con) ->
 
 flatten([]) ->
 	[];
+flatten([[] | L]) ->
+	flatten(L);
 flatten([[H | []] | L]) ->
 	[H | flatten(L)];
 flatten([[H | T] | L]) ->
