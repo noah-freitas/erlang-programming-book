@@ -30,9 +30,9 @@ reverse([H | T], N) ->
 
 concatenate(L) ->
 	concatenate(L, []).
-concatenate([[H | []] | []], Con) ->
-	[H | Con];
-concatenate([[H | []] | Lists], Con) ->
-	concatenate(Lists, [H | Con]);
-concatenate([[H | T] | Lists], Con) ->
-	concatenate([T | Lists], [H | Con]).
+concatenate([], Con) ->
+	reverse(Con);
+concatenate([[] | List], Con) ->
+	concatenate(List, Con);
+concatenate([[H | T] | List], Con) ->
+	concatenate([T | List], [H | Con]).
