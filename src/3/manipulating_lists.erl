@@ -4,10 +4,14 @@
 		% (List, IntegerLimit)
 		% creates a list with all the integers in List less than IntegerLimit.
 		% => FilteredList
-	reverse/1
+	reverse/1,
 		% (List)
-		% returns a reverse of List.
+		% creates a reverse of List.
 		% => ReversedList
+	concatenate/1
+		% (ListOfLists)
+		% concatenates a list of lists into a single list.
+		% => ConcatenatedList
 ]).
 
 filter([], _I) ->
@@ -23,3 +27,12 @@ reverse([], N) ->
 	N;
 reverse([H | T], N) ->
 	reverse(T, [H | N]).
+
+concatenate(L) ->
+	concatenate(L, []).
+concatenate([[H | []] | []], Con) ->
+	[H | Con];
+concatenate([[H | []] | Lists], Con) ->
+	concatenate(Lists, [H | Con]);
+concatenate([[H | T] | Lists], Con) ->
+	concatenate([T | Lists], [H | Con]).
