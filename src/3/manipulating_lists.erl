@@ -45,6 +45,8 @@ flatten([]) ->
 	[];
 flatten([[] | L]) ->
 	flatten(L);
+flatten([[[H] | []] | L]) ->
+	flatten(concatenate([H, L]));
 flatten([[H | []] | L]) ->
 	[H | flatten(L)];
 flatten([[H | T] | L]) ->
