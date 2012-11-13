@@ -3,18 +3,22 @@
 -export([loop/0]).
 
 start() ->
-	register(echo, spawn(echo, loop, [])).
+	register(echo, spawn(echo, loop, [])),
+	ok.
 
 loop() ->
 	receive
-		stop -> ok;
+		stop -> {ok, self()};
 		{print, Term} -> print(Term), loop();
-		Unknown -> ok
+		_ -> loop(), ok
 	end.
 
 print(Term) ->
 	io:format("~w~n", [Term]).
 
 stop() ->
-	echo ! stop,
-	unregister(echo).
+	case echo of
+		% This first case doesn't seem to work.
+		undefined -> ok;
+		_ -> echo ! stop, unregister(echo), ok
+	end.
