@@ -9,16 +9,15 @@ start() ->
 loop() ->
 	receive
 		stop -> {ok, self()};
-		{print, Term} -> print(Term), loop();
+		{print, Term} -> io:format("~w~n", [Term]), loop();
 		_ -> loop(), ok
 	end.
 
 print(Term) ->
-	io:format("~w~n", [Term]).
+	echo ! {print, Term},
+	ok.
 
 stop() ->
-	case echo of
-		% This first case doesn't seem to work.
-		undefined -> ok;
-		_ -> echo ! stop, unregister(echo), ok
-	end.
+	echo ! stop,
+	unregister(echo),
+	ok.
