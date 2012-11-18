@@ -38,7 +38,15 @@ loop(Frequencies) ->
 			reply(Pid, ok),
 			loop(NewFrequencies);
 		{request, Pid, stop} ->
-			reply(Pid, ok)
+			{_Free, Allocated} = Frequencies,
+			% Only stop the loop if there are no allocated frequencies.
+			if
+				Allocated == [] ->
+					reply(Pid, ok);
+				Allocated /= [] ->
+					reply(Pid, {error, allocated_frequencies}),
+					loop(Frequencies)
+			end
 	end.
 
 reply(Pid, Reply) ->
