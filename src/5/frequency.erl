@@ -13,16 +13,16 @@ get_frequencies() ->
 	[10, 11, 12, 13, 14, 15].
 
 stop() ->
-	call(stop).
+	call(self(), stop).
 
 allocate() ->
-	call(allocate).
+	call(self(), allocate).
 
 deallocate(Freq) ->
-	call({deallocate, Freq}).
+	call(self(), {deallocate, Freq}).
 
-call(Message) ->
-	frequency ! {request, self(), Message},
+call(Pid, Message) ->
+	frequency ! {request, Pid, Message},
 	receive
 		{reply, Reply} -> Reply
 	end.
@@ -34,7 +34,7 @@ loop(Frequencies) ->
 			reply(Pid, Reply),
 			loop(NewFrequencies);
 		{request, Pid, {deallocate, Freq}} ->
-			NewFrequencies = deallocate(Frequencies, Freq),
+			NewFrequencies = deallocate(Frequencies, Freq, Pid),
 			reply(Pid, ok),
 			loop(NewFrequencies);
 		{request, Pid, stop} ->
@@ -49,6 +49,6 @@ allocate({[], Allocated}, _Pid) ->
 allocate({[Freq|Free], Allocated}, Pid) ->
 	{{Free, [{Freq, Pid} | Allocated]}, {ok, Freq}}.
 
-deallocate({Free, Allocated}, Freq) ->
-	NewAllocated = lists:keydelete(Freq, 1, Allocated),
+deallocate({Free, Allocated}, Freq, Pid) ->
+	NewAllocated = lists:delete({Freq, Pid}, Allocated),
 	{[Freq|Free], NewAllocated}.
