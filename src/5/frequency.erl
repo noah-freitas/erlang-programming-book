@@ -55,7 +55,12 @@ reply(Pid, Reply) ->
 allocate({[], Allocated}, _Pid) ->
 	{{[], Allocated}, {error, no_frequency}};
 allocate({[Freq|Free], Allocated}, Pid) ->
-	{{Free, [{Freq, Pid} | Allocated]}, {ok, Freq}}.
+	% If this Pid has already been allocated 3 frequencies, return a
+	% frequency_quota error.  Otherwise allocate a new frequency to this Pid.
+	case lists:filter(fun ({_Freq, Pid2}) -> Pid == Pid2 end, Allocated) of
+		X when length(X) < 3 -> {{Free, [{Freq, Pid} | Allocated]}, {ok, Freq}};
+		_ -> {{[Freq|Free], Allocated}, {error, frequency_quota}}
+	end.
 
 deallocate({Free, Allocated}, Freq, Pid) ->
 	NewAllocated = lists:delete({Freq, Pid}, Allocated),
