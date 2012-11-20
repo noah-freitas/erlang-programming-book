@@ -1,6 +1,6 @@
 -module(event_manager).
 -export([start/2, stop/1]).
--export([add_handler/3, delete_handler/2, get_data/2, send_event/2]).
+-export([add_handler/3, delete_handler/2, swap_handlers/3, get_data/2, send_event/2]).
 -export([init/1]).
 
 start(Name, HandlerList) ->
@@ -27,6 +27,9 @@ add_handler(Name, Handler, InitData) ->
 delete_handler(Name, Handler) ->
 	call(Name, {delete_handler, Handler}).
 
+swap_handlers(Name, OldHandler, NewHandler) ->
+	call(Name, {swap_handlers, OldHandler, NewHandler}).
+
 get_data(Name, Handler) ->
 	call(Name, {get_data, Handler}).
 
@@ -42,6 +45,15 @@ handle_msg({delete_handler, Handler}, LoopData) ->
 			Reply = {data, Handler:terminate(Data)},
 			NewLoopData = lists:keydelete(Handler, 1, LoopData),
 			{Reply, NewLoopData}
+	end;
+handle_msg({swap_handlers, OldHandler, NewHandler}, LoopData) ->
+	case lists:keysearch(OldHandler, 1, LoopData) of
+		false -> {{error, instance}, LoopData};
+		{value, {Handler, Data}} ->
+			InitData = Handler:terminate(Data),
+			Reply = {data, InitData},
+			NewLoopData = lists:keydelete(Handler, 1, LoopData),
+			{Reply, [{NewHandler, NewHandler:init(InitData)}|NewLoopData]}
 	end;
 handle_msg({get_data, Handler}, LoopData) ->
 	case lists:keysearch(Handler, 1, LoopData) of
