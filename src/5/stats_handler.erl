@@ -4,7 +4,7 @@
 init(_) ->
     dict:new().
 
-terminate(Dict) -> ok.
+terminate(_Dict) -> ok.
 
 handle_event({get_data, Key}, Dict) ->
 	case dict:find(Key, Dict) of

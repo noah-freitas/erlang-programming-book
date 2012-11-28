@@ -1,3 +1,2 @@
-1353,376971,592400,raise_alarm,10,cabinet_open
-1353,377044,693486,clear_alarm,10,cabinet_open
-1353,377066,2716,event,156,link_up
+1354,144168,762656,raise_alarm,10,cabinet_open
+1354,144267,898020,event,156,link_up
