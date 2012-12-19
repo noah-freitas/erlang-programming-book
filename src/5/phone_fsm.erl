@@ -1,4 +1,4 @@
-=module(phone_fsm).
+-module(phone_fsm).
 
 idle() ->
     receive
@@ -19,3 +19,16 @@ ringing(Number) ->
 			stop_ringing(),
 			connected(Number)
 	end.
+
+start_ringing() ->
+	receive
+		off_hook -> stop_ringing();
+		other_on_hood -> stop_ringing();
+		_ -> start_ringing()
+	end.
+
+stop_ringing() ->
+	.
+
+start_tone() ->
+	.
